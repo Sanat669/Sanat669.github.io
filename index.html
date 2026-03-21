@@ -3,97 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum's Echo Academy</title>
+    <title>Quantum's Echo Academy | Pro LMS</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCl1VyQZT5GJ0zSd3YVHFSybukKvY7Li78",
-            authDomain: "sanat-teaching-system.firebaseapp.com",
-            projectId: "sanat-teaching-system",
-            storageBucket: "sanat-teaching-system.firebasestorage.app",
-            messagingSenderId: "185568742186",
-            appId: "1:185568742186:web:f858b9d4814f3304c1ac53",
-            measurementId: "G-XQR52M2KX9"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Listen for live Class Link updates
-        onSnapshot(doc(db, "settings", "classConfig"), (doc) => {
-            if (doc.exists()) {
-                const link = doc.data().gmeet;
-                const btn = document.getElementById('join-btn');
-                btn.onclick = () => window.open(link, '_blank');
-                btn.style.display = 'inline-block';
-            }
-        });
-
-        window.handleCredentialResponse = async (response) => {
-            const payload = JSON.parse(atob(response.credential.split('.')[1]));
-            document.getElementById('user-name').innerText = payload.name;
-            
-            const userRef = doc(db, "students", payload.email);
-            const userSnap = await getDoc(userRef);
-            
-            let studentId;
-            if (userSnap.exists()) {
-                studentId = userSnap.data().studentId;
-            } else {
-                studentId = Math.random().toString(36).slice(2, 8).toUpperCase();
-                await setDoc(userRef, { name: payload.name, studentId: studentId });
-            }
-
-            document.getElementById('student-id').innerText = studentId;
-            document.getElementById('portal-content').style.display = 'block';
-            if (payload.email === "tsanat669@gmail.com") {
-                document.getElementById('admin-section').style.display = 'block';
-            }
-        };
-
-        window.updateClass = async () => {
-            const newLink = document.getElementById('gmeet-input').value;
-            if(newLink) {
-                await setDoc(doc(db, "settings", "classConfig"), { gmeet: newLink });
-                alert("Class link broadcasted to all students!");
-            }
-        };
-    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root { --primary: #1a2a6c; --accent: #f2a900; --light: #f4f7f6; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--light); color: #333; text-align: center; }
-        header { background: linear-gradient(to right, #1a2a6c, #b21f1f, #fdbb2d); color: white; padding: 3rem 1rem; }
-        .container { padding: 2rem; max-width: 800px; margin: auto; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); margin-bottom: 2rem; }
-        .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        #portal-content, #admin-section { display: none; }
-        input { padding: 10px; width: 80%; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; }
+        :root { --cobalt: #1e293b; --electric: #3b82f6; --gold: #f59e0b; --glass: rgba(255, 255, 255, 0.9); }
+        body { font-family: 'Segoe UI', system-ui; margin: 0; background: #f1f5f9; display: flex; height: 100vh; }
+        
+        /* Sidebar Navigation */
+        .sidebar { width: 250px; background: var(--cobalt); color: white; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .nav-item { padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; color: #94a3b8; }
+        .nav-item:hover, .nav-item.active { background: #334155; color: white; }
+        
+        /* Main Content */
+        .viewport { flex: 1; overflow-y: auto; padding: 40px; }
+        .page { display: none; animation: fadeIn 0.4s ease; }
+        .page.active { display: block; }
+        
+        /* Onboarding Modal */
+        #onboarding-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: none; align-items: center; justify-content: center; }
+        .form-card { background: white; padding: 30px; border-radius: 15px; width: 400px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+        
+        /* Components */
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .btn-pro { background: var(--electric); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Quantum's Echo Academy</h1>
-        <p>Innovation in Education</p>
-    </header>
-    <div class="container">
-        <div class="card">
-            <h2>Student Portal</h2>
-            <div id="g_id_onload" data-client_id="1020193667157-8apckjitkn3orps7h02mo9ru0seabm1c.apps.googleusercontent.com" data-callback="handleCredentialResponse"></div>
-            <div class="g_id_signin" data-type="standard"></div>
-            <div id="portal-content">
-                <h3>Welcome, <span id="user-name"></span></h3>
-                <p>Your Permanent ID: <strong id="student-id" style="color: #b21f1f;"></strong></p>
-                <button id="join-btn" class="btn" style="background: #28a745; display:none;">Join Live Class</button>
-            </div>
+
+<div id="onboarding-overlay">
+    <div class="form-card">
+        <h2>Complete Your Profile</h2>
+        <input type="text" id="reg-school" placeholder="School Name">
+        <select id="reg-grade">
+            <option value="">Select Grade</option>
+            <option value="9">Grade 9</option>
+            <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
+            <option value="12">Grade 12</option>
+        </select>
+        <input type="text" id="reg-subjects" placeholder="Subjects (e.g. Physics, Math)">
+        <button class="btn-pro" onclick="saveProfile()">Start Learning</button>
+    </div>
+</div>
+
+<nav class="sidebar">
+    <h2 style="color:var(--electric)">QE Academy</h2>
+    <div class="nav-item active" onclick="showPage('dash')"><i class="fas fa-th-large"></i> Dashboard</div>
+    <div class="nav-item" onclick="showPage('courses')"><i class="fas fa-book"></i> Practice Papers</div>
+    <div class="nav-item" onclick="showPage('events')"><i class="fas fa-calendar-star"></i> Events</div>
+    <div class="nav-item" onclick="showPage('leaderboard')"><i class="fas fa-trophy"></i> Leaderboard</div>
+    <div class="nav-item" onclick="showPage('about')"><i class="fas fa-info-circle"></i> About & Contact</div>
+    <div id="admin-btn" class="nav-item" style="display:none; color:var(--gold)" onclick="showPage('admin')"><i class="fas fa-user-shield"></i> Teacher Panel</div>
+</nav>
+
+<main class="viewport">
+    <div id="dash" class="page active">
+        <h1>Welcome, <span id="display-name">Student</span></h1>
+        <div class="card" style="background: linear-gradient(90deg, #3b82f6, #60a5fa); color: white;">
+            <h3>Live Classroom</h3>
+            <p id="class-topic">No active class at the moment.</p>
+            <button id="join-btn" class="btn-pro" style="background:white; color:var(--electric); display:none;">Join Google Meet</button>
         </div>
-        <div id="admin-section" class="card">
-            <h3>Principal's Dashboard</h3>
-            <input type="text" id="gmeet-input" placeholder="Paste new GMeet link here">
-            <button class="btn" onclick="updateClass()">Broadcast Link</button>
+        <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="card"><h3>My School</h3><p id="display-school">--</p></div>
+            <div class="card"><h3>Grade</h3><p id="display-grade">--</p></div>
         </div>
     </div>
+
+    <div id="admin" class="page">
+        <h1>Teacher Dashboard</h1>
+        <div class="card">
+            <h3>Broadcast Live Class</h3>
+            <input type="text" id="adm-topic" placeholder="Class Topic (e.g. Algebra Basics)">
+            <input type="text" id="adm-link" placeholder="GMeet Link">
+            <button class="btn-pro" onclick="broadcastClass()">Update for All Students</button>
+        </div>
+    </div>
+
+    <div id="about" class="page">
+        <div class="card">
+            <h1>About Quantum's Echo</h1>
+            <p>Founded by Sanat, we aim to provide high-quality education tools.</p>
+            <hr>
+            <h3>Contact Me</h3>
+            <button class="btn-pro" onclick="window.location.href='mailto:tsanat669@gmail.com'">Send me an Email</button>
+        </div>
+    </div>
+</main>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCl1VyQZT5GJ0zSd3YVHFSybukKvY7Li78",
+        authDomain: "sanat-teaching-system.firebaseapp.com",
+        projectId: "sanat-teaching-system",
+        storageBucket: "sanat-teaching-system.firebasestorage.app",
+        messagingSenderId: "185568742186",
+        appId: "1:185568742186:web:f858b9d4814f3304c1ac53"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let currentUserEmail = "";
+
+    window.handleCredentialResponse = async (response) => {
+        const payload = JSON.parse(atob(response.credential.split('.')[1]));
+        currentUserEmail = payload.email;
+        
+        const userRef = doc(db, "students", currentUserEmail);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+            document.getElementById('onboarding-overlay').style.display = 'flex';
+        } else {
+            loadUserData(userSnap.data());
+        }
+    };
+
+    window.saveProfile = async () => {
+        const data = {
+            school: document.getElementById('reg-school').value,
+            grade: document.getElementById('reg-grade').value,
+            subjects: document.getElementById('reg-subjects').value,
+            email: currentUserEmail
+        };
+        await setDoc(doc(db, "students", currentUserEmail), data);
+        location.reload();
+    };
+
+    function loadUserData(data) {
+        document.getElementById('display-name').innerText = currentUserEmail.split('@')[0];
+        document.getElementById('display-school').innerText = data.school;
+        document.getElementById('display-grade').innerText = "Grade " + data.grade;
+        if(currentUserEmail === "tsanat669@gmail.com") document.getElementById('admin-btn').style.display = 'block';
+    }
+
+    window.showPage = (id) => {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    };
+
+    window.broadcastClass = async () => {
+        const topic = document.getElementById('adm-topic').value;
+        const link = document.getElementById('adm-link').value;
+        await setDoc(doc(db, "settings", "classConfig"), { topic, link });
+        alert("Broadcasted!");
+    };
+
+    onSnapshot(doc(db, "settings", "classConfig"), (doc) => {
+        if(doc.exists()){
+            document.getElementById('class-topic').innerText = doc.data().topic;
+            const btn = document.getElementById('join-btn');
+            btn.style.display = 'block';
+            btn.onclick = () => window.open(doc.data().link, '_blank');
+        }
+    });
+</script>
+
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true; s1.src='https://embed.tawk.to/65f8a29e1ec1082f05d978a2/default';
+s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+
 </body>
 </html>
