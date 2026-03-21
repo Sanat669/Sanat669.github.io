@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanat S. Rathod - Teaching</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root { --primary: #2c3e50; --accent: #3498db; --light: #ecf0f1; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--light); color: var(--primary); text-align: center; }
+        header { background: var(--primary); color: white; padding: 2rem; }
+        .container { padding: 2rem; max-width: 800px; margin: auto; }
+        .card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 1rem; }
+        .subject-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1rem; }
+        #student-id-box { display: none; margin-top: 20px; padding: 15px; border: 2px dashed var(--accent); font-weight: bold; }
+        #admin-section { display: none; margin-top: 40px; border-top: 2px solid #ccc; padding-top: 20px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Sanat S. Rathod - Teaching</h1>
+    <p>Empowering the next generation of learners</p>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h2>Our Subjects</h2>
+        <div class="subject-grid">
+            <div class="card">Maths</div>
+            <div class="card">Science</div>
+            <div class="card">English</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Student Portal</h2>
+        <div id="g_id_onload"
+             data-client_id="1020193667157-8apckjitkn3orps7h02mo9ru0seabm1c.apps.googleusercontent.com"
+             data-callback="handleCredentialResponse">
+        </div>
+        <div class="g_id_signin" data-type="standard"></div>
+
+        <div id="student-id-box">
+            Welcome, <span id="user-name"></span>!<br>
+            Your Student ID: <span id="student-id" style="color: #e74c3c;"></span>
+        </div>
+    </div>
+
+    <div id="admin-section" class="card">
+        <h3>Admin Dashboard</h3>
+        <p>Update Google Meet Codes:</p>
+        <input type="text" id="gmeet-input" placeholder="Enter GMeet Link">
+        <button class="btn" onclick="updateMeet()">Update Class</button>
+    </div>
+
+    <div class="card">
+        <h3>Contact Me</h3>
+        <p>Email: tsanat669@gmail.com</p>
+        <p>Phone: +91 9148582159</p>
+    </div>
+</div>
+
+<script>
+    function handleCredentialResponse(response) {
+        // Decode the Google JWT to get user info
+        const responsePayload = parseJwt(response.credential);
+        
+        document.getElementById('user-name').innerText = responsePayload.name;
+        
+        // Student ID Logic: Check localStorage first, or generate new
+        let savedId = localStorage.getItem('student_id_' + responsePayload.email);
+        if (!savedId) {
+            savedId = Math.random().toString(36).slice(2, 8).toUpperCase();
+            localStorage.setItem('student_id_' + responsePayload.email, savedId);
+        }
+
+        document.getElementById('student-id').innerText = savedId;
+        document.getElementById('student-id-box').style.display = 'block';
+
+        // Admin Access: Only if the email matches yours
+        if (responsePayload.email === "tsanat669@gmail.com") {
+            document.getElementById('admin-section').style.display = 'block';
+        }
+    }
+
+    function parseJwt(token) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(window.atob(base64));
+    }
+
+    function updateMeet() {
+        const link = document.getElementById('gmeet-input').value;
+        alert("Class link updated to: " + link + "\n(In a full setup, this would save to Firebase!)");
+    }
+</script>
+
+</body>
+</html>
