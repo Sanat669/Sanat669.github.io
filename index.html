@@ -7,56 +7,38 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root { --primary: #1e293b; --accent: #b59410; --bg: #f1f5f9; --sidebar: #0f172a; --card-bg: #ffffff; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; display: flex; height: 100vh; background: var(--bg); color: #334155; }
-        
-        /* Sidebar Navigation */
+        :root { --primary: #0f172a; --accent: #b59410; --bg: #f1f5f9; --sidebar: #0f172a; --card-bg: #ffffff; --text: #334155; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; background: var(--bg); color: var(--text); }
         .sidebar { width: 280px; background: var(--sidebar); color: white; display: flex; flex-direction: column; padding: 20px; box-shadow: 4px 0 10px rgba(0,0,0,0.1); }
         .logo { font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 40px; display: flex; align-items: center; gap: 12px; }
-        .nav-item { padding: 15px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: #94a3b8; transition: 0.3s; margin-bottom: 8px; font-weight: 500; }
-        .nav-item:hover, .nav-item.active { background: rgba(181, 148, 16, 0.15); color: white; border-left: 4px solid var(--accent); }
-
-        /* Main Content Area */
+        .nav-item { padding: 15px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: #94a3b8; transition: 0.3s; margin-bottom: 8px; }
+        .nav-item:hover, .nav-item.active { background: rgba(181, 148, 16, 0.2); color: white; border-left: 4px solid var(--accent); }
         .main-content { flex: 1; overflow-y: auto; padding: 40px; }
-        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
         .page { display: none; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
-
-        /* Grid Layout for Admin Panel */
-        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1-fr)); gap: 25px; }
-
-        /* Cards & Sections */
-        .card { background: var(--card-bg); padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; position: relative; }
-        .card-header { font-size: 18px; font-weight: 700; color: var(--sidebar); margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; display: flex; align-items: center; gap: 10px; }
-        
-        /* Form Styling */
-        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: #f8fafc; }
-        .btn-gold { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: 700; transition: 0.3s; width: 100%; }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 25px; }
+        .card-header { font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; }
+        .btn-gold { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: 700; width: 100%; transition: 0.3s; }
         .btn-gold:hover { background: #967a0d; transform: translateY(-2px); }
-
-        /* Welcome Banner */
-        .welcome-banner { background: linear-gradient(135deg, #1e293b, #334155); color: white; padding: 30px; border-radius: 16px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
-
-        /* Chat Widget */
-        .chat-container { position: fixed; bottom: 20px; right: 20px; width: 320px; height: 450px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; z-index: 1000; overflow: hidden; display: none; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .welcome-banner { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 35px; border-radius: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 5px solid var(--accent); }
         .overlay { position: fixed; inset: 0; background: var(--sidebar); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div id="auth-screen" class="overlay">
     <div class="card" style="width: 400px; text-align: center;">
-        <h1 style="color: var(--sidebar)">QE Academy</h1>
+        <h1 style="color: var(--primary)">QE Academy</h1>
         <div id="g_id_onload" data-client_id="1020193667157-8apckjitkn3orps7h02mo9ru0seabm1c.apps.googleusercontent.com" data-callback="handleAuth"></div>
         <div class="g_id_signin" data-type="standard"></div>
         <div id="reg-form" style="display:none; margin-top:20px; text-align:left;">
-            <h3>Complete Registration</h3>
+            <h3>New Student Registration</h3>
             <input type="text" id="reg-school" placeholder="School Name">
             <select id="reg-grade"><option value="">Select Grade</option><option value="1">Grade 1</option><option value="7">Grade 7</option></select>
-            <input type="text" id="reg-subjects" placeholder="Subjects (e.g., Math, Science)">
-            <button class="btn-gold" onclick="finishReg()">Join Academy</button>
+            <input type="text" id="reg-subjects" placeholder="Enrolled Subjects (e.g. Math, Physics)">
+            <button class="btn-gold" onclick="finishReg()">Access Command Center</button>
         </div>
     </div>
 </div>
@@ -66,71 +48,49 @@
     <div class="nav-item active" onclick="showPage('dash')"><i class="fas fa-home"></i> Dashboard</div>
     <div class="nav-item" onclick="showPage('classes')"><i class="fas fa-video"></i> Your Classes</div>
     <div class="nav-item" onclick="showPage('arena')"><i class="fas fa-gamepad"></i> Practice Arena</div>
-    <div class="nav-item" onclick="showPage('notices')"><i class="fas fa-bell"></i> Notices</div>
     <div class="nav-item" onclick="showPage('toppers')"><i class="fas fa-trophy"></i> Hall of Toppers</div>
-    <div class="nav-item" onclick="showPage('feedback')"><i class="fas fa-comments"></i> Feedback</div>
-    <div class="nav-item" onclick="showPage('about')"><i class="fas fa-user-tie"></i> About Me</div>
-    <div id="admin-link" class="nav-item" style="display:none; color: var(--accent)" onclick="showPage('admin')"><i class="fas fa-tools"></i> Founders Command</div>
-    <div class="nav-item" style="margin-top:auto" onclick="location.reload()"><i class="fas fa-power-off"></i> Logout</div>
+    <div class="nav-item" onclick="showPage('about')"><i class="fas fa-user-tie"></i> About Founder</div>
+    <div id="admin-link" class="nav-item" style="display:none; color: var(--accent)" onclick="showPage('admin')"><i class="fas fa-terminal"></i> Founders Command</div>
 </nav>
 
 <main class="main-content">
     <div id="dash" class="page active">
         <div class="welcome-banner">
-            <div>
-                <h1 id="welcome-text">Loading...</h1>
-                <p id="rank-text">Rank: Initializing</p>
-            </div>
-            <i class="fas fa-user-shield fa-3x" style="opacity: 0.3;"></i>
+            <div><h1 id="welcome-text">Loading Portal...</h1><p id="rank-text">Rank: Initializing</p></div>
+            <i class="fas fa-shield-alt fa-3x" style="color: var(--accent)"></i>
         </div>
-        
         <div class="card">
-            <div class="card-header"><i class="fas fa-envelope"></i> Contact Founder</div>
-            <textarea id="contact-input" placeholder="Message will go to Sanat's dashboard..."></textarea>
-            <button class="btn-gold" onclick="sendToFounder()">Send Private Message</button>
+            <div class="card-header"><i class="fas fa-paper-plane"></i> Founder Direct Contact</div>
+            <textarea id="contact-input" placeholder="Message Sanat directly..."></textarea>
+            <button class="btn-gold" onclick="sendToFounder()">Send Encrypted Message</button>
         </div>
     </div>
 
     <div id="admin" class="page">
-        <h1 style="color: var(--sidebar)">Founders Command Panel</h1>
-        <div class="admin-grid">
+        <h1>Founders Command Panel</h1>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="card">
-                <div class="card-header">Student Management</div>
-                <input type="text" id="adm-id" placeholder="Student ID/Email">
-                <input type="text" id="adm-rank" placeholder="Enter New Rank">
-                <button class="btn-gold" onclick="updateStudent()">Update Rank</button>
+                <div class="card-header">Edit Student Details</div>
+                <input type="text" id="adm-email" placeholder="Student Email">
+                <input type="text" id="adm-rank" placeholder="New Rank">
+                <button class="btn-gold" onclick="updateStudent()">Update</button>
             </div>
-
             <div class="card">
-                <div class="card-header">Broadcast Classes</div>
-                <select id="adm-grade"><option value="1">Grade 1</option><option value="7">Grade 7</option></select>
-                <input type="text" id="adm-subject" placeholder="Subject Name">
-                <input type="url" id="adm-link" placeholder="GMeet / Event Link">
-                <button class="btn-gold" onclick="broadcast()">Broadcast Link</button>
+                <div class="card-header">Post Practice Paper</div>
+                <input type="text" id="paper-title" placeholder="Paper Name">
+                <input type="url" id="paper-url" placeholder="Paper Link">
+                <button class="btn-gold" onclick="addPaper()">Release</button>
             </div>
-
             <div class="card" style="grid-column: span 2;">
-                <div class="card-header">Student Messages Inbox</div>
-                <div id="inbox-list">No messages from students yet.</div>
+                <div class="card-header">Founder Inbox</div>
+                <div id="inbox-list">No messages yet.</div>
             </div>
         </div>
     </div>
 
-    <div id="toppers" class="page">
-        <h1>Hall of Toppers</h1>
-        <div id="topper-nav" style="margin-bottom:20px;">
-            <button class="btn-gold" style="width:auto; margin-right:10px;" onclick="viewToppers('1')">Grade 1</button>
-            <button class="btn-gold" style="width:auto;" onclick="viewToppers('7')">Grade 7</button>
-        </div>
-        <div id="topper-list" class="admin-grid"></div>
-    </div>
-    
-    <div id="about" class="page">
-        <h1>About Founder Sanat</h1>
-        <div class="card">
-            <p>Welcome to QE Academy. My mission is to build the first billion-dollar educational empire in my family.</p>
-            <p><strong>Contact:</strong> tsanat669@gmail.com</p>
-        </div>
+    <div id="arena" class="page">
+        <h1>Practice Arena</h1>
+        <div id="paper-list"></div>
     </div>
 </main>
 
@@ -155,7 +115,6 @@
         const payload = JSON.parse(atob(response.credential.split('.')[1]));
         const email = payload.email;
         const snap = await getDoc(doc(db, "students", email));
-
         if (!snap.exists()) {
             userData = { email };
             document.getElementById('google-login-box').style.display = 'none';
@@ -183,15 +142,26 @@
             document.getElementById('admin-link').style.display = 'flex';
             loadInbox();
         }
+        loadPapers();
     }
 
-    window.broadcast = async () => {
-        const grade = document.getElementById('adm-grade').value;
-        const sub = document.getElementById('adm-subject').value;
-        const link = document.getElementById('adm-link').value;
-        await addDoc(collection(db, "broadcasts"), { grade, sub, link, time: Date.now() });
-        alert("Broadcast Successful!");
+    window.addPaper = async () => {
+        const title = document.getElementById('paper-title').value;
+        const url = document.getElementById('paper-url').value;
+        await addDoc(collection(db, "papers"), { title, url, grade: userData.grade });
+        alert("Paper Released!");
     };
+
+    function loadPapers() {
+        onSnapshot(query(collection(db, "papers"), where("grade", "==", userData.grade)), (snap) => {
+            const list = document.getElementById('paper-list');
+            list.innerHTML = "";
+            snap.forEach(d => {
+                const p = d.data();
+                list.innerHTML += `<div class="card"><b>${p.title}</b> <a href="${p.url}" target="_blank" class="btn-gold" style="width:auto; float:right;">Start</a></div>`;
+            });
+        });
+    }
 
     window.sendToFounder = async () => {
         const msg = document.getElementById('contact-input').value;
@@ -205,7 +175,7 @@
             list.innerHTML = "";
             snap.forEach(d => {
                 const m = d.data();
-                list.innerHTML += `<div class="card" style="margin-bottom:10px;"><b>${m.from}:</b> ${m.msg}</div>`;
+                list.innerHTML += `<div class="card"><b>${m.from}:</b> ${m.msg}</div>`;
             });
         });
     }
