@@ -9,24 +9,18 @@
     <style>
         :root { --primary: #2563eb; --secondary: #0f172a; --accent: #f59e0b; --bg: #f8fafc; }
         body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); display: flex; height: 100vh; overflow: hidden; }
-        
-        /* Sidebar Navigation */
         .sidebar { width: 280px; background: var(--secondary); color: white; padding: 30px 20px; display: flex; flex-direction: column; }
         .logo { font-size: 22px; font-weight: 800; color: var(--primary); margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
         .nav-item { padding: 14px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: #94a3b8; transition: 0.3s; margin-bottom: 5px; }
         .nav-item:hover, .nav-item.active { background: rgba(37, 99, 235, 0.1); color: white; }
-        
-        /* Viewport */
         .viewport { flex: 1; overflow-y: auto; padding: 40px; }
         .page { display: none; }
         .page.active { display: block; animation: fadeIn 0.5s ease; }
         .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #e2e8f0; }
-        
-        /* Founder Controls */
-        .admin-box { background: #f1f5f9; padding: 20px; border-radius: 15px; border: 2px dashed var(--primary); margin-top: 10px; }
-        .btn-elite { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 8px; }
-
+        .admin-box { background: #f1f5f9; padding: 20px; border-radius: 15px; border: 2px dashed var(--primary); margin-top: 10px; margin-bottom: 20px; }
+        .btn-elite { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-elite:hover { opacity: 0.9; transform: scale(1.02); }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
         .overlay { position: fixed; inset: 0; background: var(--secondary); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -45,10 +39,7 @@
     <div class="logo"><i class="fas fa-crown"></i> QE ACADEMY</div>
     <div class="nav-item active" onclick="showPage('dash')"><i class="fas fa-home"></i> Dashboard</div>
     <div class="nav-item" onclick="showPage('classes')"><i class="fas fa-video"></i> Your Classes</div>
-    <div class="nav-item" onclick="showPage('arena')"><i class="fas fa-gamepad"></i> Practice Arena</div>
-    <div class="nav-item" onclick="showPage('notices')"><i class="fas fa-bell"></i> Official Notices</div>
     <div class="nav-item" onclick="showPage('toppers')"><i class="fas fa-trophy"></i> Hall of Toppers</div>
-    <div class="nav-item" onclick="showPage('about')"><i class="fas fa-user-tie"></i> About the Founder</div>
     <div id="admin-btn" class="nav-item" style="display:none; color: var(--accent)" onclick="showPage('admin')">
         <i class="fas fa-terminal"></i> Founders Command Panel
     </div>
@@ -56,53 +47,25 @@
 </nav>
 
 <main class="viewport">
-    
     <div id="dash" class="page active">
         <div class="card" style="background: linear-gradient(135deg, #1e293b, #334155); color: white;">
             <h1 id="welcome-header">Welcome, Cadet</h1>
             <p id="rank-display">Rank: Initializing...</p>
         </div>
-        <div class="card">
-            <h3>Recent Message from Founder</h3>
-            <p id="latest-notice">Stay focused on your goals.</p>
-        </div>
     </div>
 
     <div id="classes" class="page">
         <h1>Your Enrolled Classes</h1>
-        <div id="class-list" class="card">No classes assigned to your grade yet.</div>
-    </div>
-
-    <div id="arena" class="page">
-        <h1>Mission Area</h1>
-        <div id="paper-links" class="card">Papers assigned by the Founder will appear here.</div>
-    </div>
-
-    <div id="notices" class="page">
-        <h1>Official Notices</h1>
-        <div id="notice-board"></div>
+        <div id="class-list" class="card">No live classes scheduled.</div>
     </div>
 
     <div id="toppers" class="page">
         <h1>Hall of Toppers</h1>
         <div class="card">
             <p>Filter by Grade:</p>
-            <div id="grade-filters">
-                <button onclick="filterToppers('1')">Grade 1</button>
-                <button onclick="filterToppers('7')">Grade 7</button>
-            </div>
+            <button class="btn-elite" onclick="filterToppers('1')">Grade 1</button>
+            <button class="btn-elite" onclick="filterToppers('7')">Grade 7</button>
             <div id="toppers-list" style="margin-top:20px;"></div>
-        </div>
-    </div>
-
-    <div id="about" class="page">
-        <div class="card">
-            <h1>About Sanat, Founder of Quantum's Echo</h1>
-            <p>I am dedicated to revolutionizing education through technology. My mission is to build a platform that empowers students to reach elite ranks in academics and beyond.</p>
-            <hr>
-            <h3>Message the Founder</h3>
-            <textarea id="msg-to-founder" placeholder="Enter your direct message..."></textarea>
-            <button class="btn-elite" onclick="sendMessage()">Send Message</button>
         </div>
     </div>
 
@@ -110,25 +73,20 @@
         <h1>Founders Command Panel</h1>
         
         <div class="admin-box">
-            <h3>Manage Student Ranks</h3>
-            <input type="text" id="adm-email" placeholder="Student Email/ID">
-            <input type="text" id="adm-rank" placeholder="Enter Rank (e.g. Commander, Elite)">
-            <button class="btn-elite" onclick="updateRank()">Update Rank</button>
-        </div>
-
-        <div class="admin-box">
-            <h3>Post Class Links</h3>
+            <h3>Post Class Hyperlinks</h3>
             <select id="adm-grade"><option value="1">Grade 1</option><option value="7">Grade 7</option></select>
-            <input type="text" id="adm-meet" placeholder="Meet Link">
+            <input type="url" id="adm-meet" placeholder="Paste Meeting Link (Google Meet/Zoom)">
             <button class="btn-elite" onclick="updateClass()">Broadcast Class</button>
         </div>
 
         <div class="admin-box">
-            <h3>Student Messages & Results</h3>
-            <div id="inbox"></div>
+            <h3>Add Result to Hall of Toppers</h3>
+            <input type="text" id="top-name" placeholder="Student Name">
+            <select id="top-grade"><option value="1">Grade 1</option><option value="7">Grade 7</option></select>
+            <input type="url" id="top-link" placeholder="Paste Result/Certificate Link">
+            <button class="btn-elite" onclick="addToppers()">Add Topper & Result</button>
         </div>
     </div>
-
 </main>
 
 <script type="module">
@@ -155,64 +113,69 @@
         
         const userRef = doc(db, "students", userEmail);
         const userSnap = await getDoc(userRef);
-
         if (!userSnap.exists()) {
-            await setDoc(userRef, { email: userEmail, rank: "Cadet", grade: "Not Assigned", school: "QE Academy" });
+            await setDoc(userRef, { email: userEmail, rank: "Cadet", grade: "1" });
         }
-        
         loadProfile();
     };
 
-    async function loadProfile() {
+    function loadProfile() {
         onSnapshot(doc(db, "students", userEmail), (doc) => {
             const data = doc.data();
-            document.getElementById('welcome-header').innerText = userEmail === "tsanat669@gmail.com" ? "Welcome, Founder Sanat" : "Welcome, " + userEmail.split('@')[0];
+            document.getElementById('welcome-header').innerText = userEmail === "tsanat669@gmail.com" ? "Welcome, Founder Sanat" : "Welcome, Student";
             document.getElementById('rank-display').innerText = "Rank: " + (data.rank || "Cadet");
             if(userEmail === "tsanat669@gmail.com") document.getElementById('admin-btn').style.display = 'flex';
+            loadClasses(data.grade || "1");
         });
     }
 
-    window.updateRank = async () => {
-        const email = document.getElementById('adm-email').value;
-        const rank = document.getElementById('adm-rank').value;
-        await setDoc(doc(db, "students", email), { rank: rank }, { merge: true });
-        alert("Rank updated for " + email);
+    // BROADCAST CLASS LINK
+    window.updateClass = async () => {
+        const grade = document.getElementById('adm-grade').value;
+        const link = document.getElementById('adm-meet').value;
+        await setDoc(doc(db, "classes", "grade-" + grade), { url: link });
+        alert("Class Link Posted!");
     };
 
-    window.sendMessage = async () => {
-        const msg = document.getElementById('msg-to-founder').value;
-        await addDoc(collection(db, "messages"), { from: userEmail, text: msg, time: Date.now() });
-        alert("Message sent to Sanat's Panel.");
+    function loadClasses(grade) {
+        onSnapshot(doc(db, "classes", "grade-" + grade), (d) => {
+            if(d.exists()) {
+                document.getElementById('class-list').innerHTML = `
+                    <p>Live Class Link is Active:</p>
+                    <a href="${d.data().url}" target="_blank" class="btn-elite" style="text-decoration:none">Join Live Class</a>`;
+            }
+        });
+    }
+
+    // ADD TOPPER WITH RESULT LINK
+    window.addToppers = async () => {
+        const name = document.getElementById('top-name').value;
+        const grade = document.getElementById('top-grade').value;
+        const link = document.getElementById('top-link').value;
+        await addDoc(collection(db, "toppers"), { name, grade, resultUrl: link });
+        alert("Topper Added!");
+    };
+
+    window.filterToppers = (grade) => {
+        const q = query(collection(db, "toppers"), where("grade", "==", grade));
+        onSnapshot(q, (snap) => {
+            const list = document.getElementById('toppers-list');
+            list.innerHTML = "";
+            snap.forEach(d => {
+                const data = d.data();
+                list.innerHTML += `
+                    <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong>${data.name}</strong>
+                        <a href="${data.resultUrl}" target="_blank" class="btn-elite" style="text-decoration:none; font-size:12px;">View Result</a>
+                    </div>`;
+            });
+        });
     };
 
     window.showPage = (id) => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        event.currentTarget.classList.add('active');
     };
-
-    // FOUNDER: Load messages to panel
-    if(window.location.href.includes("sanat669")) {
-        onSnapshot(collection(db, "messages"), (snap) => {
-            const inbox = document.getElementById('inbox');
-            inbox.innerHTML = "";
-            snap.forEach(d => {
-                inbox.innerHTML += `<div class="card"><strong>From: ${d.data().from}</strong><p>${d.data().text}</p></div>`;
-            });
-        });
-    }
 </script>
-
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true; s1.src='https://embed.tawk.to/65f8a29e1ec1082f05d978a2/default';
-s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-
 </body>
 </html>
