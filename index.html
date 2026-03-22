@@ -7,92 +7,116 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root { --cobalt: #1e293b; --electric: #3b82f6; --gold: #f59e0b; --glass: rgba(255, 255, 255, 0.9); }
-        body { font-family: 'Segoe UI', system-ui; margin: 0; background: #f1f5f9; display: flex; height: 100vh; }
+        :root { --cobalt: #1e293b; --electric: #3b82f6; --gold: #f59e0b; --white: #ffffff; }
+        body { font-family: 'Segoe UI', system-ui; margin: 0; background: #f1f5f9; display: flex; height: 100vh; overflow: hidden; }
         
-        /* Sidebar Navigation */
-        .sidebar { width: 250px; background: var(--cobalt); color: white; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .nav-item { padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; color: #94a3b8; }
+        /* Sidebar */
+        .sidebar { width: 260px; background: var(--cobalt); color: white; padding: 25px; display: flex; flex-direction: column; gap: 15px; }
+        .logo { font-size: 20px; font-weight: 800; color: var(--electric); margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
+        .nav-item { padding: 12px 15px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: #94a3b8; transition: 0.3s; }
         .nav-item:hover, .nav-item.active { background: #334155; color: white; }
         
-        /* Main Content */
-        .viewport { flex: 1; overflow-y: auto; padding: 40px; }
-        .page { display: none; animation: fadeIn 0.4s ease; }
-        .page.active { display: block; }
+        /* Viewport */
+        .viewport { flex: 1; overflow-y: auto; padding: 40px; box-sizing: border-box; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
         
-        /* Onboarding Modal */
-        #onboarding-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: none; align-items: center; justify-content: center; }
-        .form-card { background: white; padding: 30px; border-radius: 15px; width: 400px; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
-        
-        /* Components */
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .btn-pro { background: var(--electric); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        
+        /* Overlays */
+        .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .form-card { background: white; padding: 40px; border-radius: 20px; width: 380px; text-align: center; color: var(--cobalt); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); }
+        input, select { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; box-sizing: border-box; }
+        .btn-pro { background: var(--electric); color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer; width: 100%; font-size: 16px; margin-top: 10px; transition: 0.2s; }
+        .btn-pro:hover { background: #2563eb; transform: translateY(-1px); }
+
+        /* Dashboard Cards */
+        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 25px; }
+        .live-banner { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; display: flex; justify-content: space-between; align-items: center; }
+        .status-pill { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-<div id="onboarding-overlay">
+<div id="login-screen" class="overlay">
     <div class="form-card">
-        <h2>Complete Your Profile</h2>
-        <input type="text" id="reg-school" placeholder="School Name">
+        <h1 style="margin:0; color:var(--electric);">QE Academy</h1>
+        <p style="color:#64748b; margin-bottom: 25px;">The Future of Learning</p>
+        <div id="g_id_onload" data-client_id="1020193667157-8apckjitkn3orps7h02mo9ru0seabm1c.apps.googleusercontent.com" data-callback="handleCredentialResponse"></div>
+        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue" data-text="signin_with" data-size="large"></div>
+    </div>
+</div>
+
+<div id="onboarding-screen" class="overlay" style="display:none;">
+    <div class="form-card">
+        <h2>Welcome, Founder!</h2>
+        <p>Set up your profile details below</p>
+        <input type="text" id="reg-school" placeholder="Your School/Academy Name">
         <select id="reg-grade">
-            <option value="">Select Grade</option>
-            <option value="9">Grade 9</option>
-            <option value="10">Grade 10</option>
-            <option value="11">Grade 11</option>
-            <option value="12">Grade 12</option>
+            <option value="">Target Grade Level</option>
+            <option value="1">Grade 1</option>
+            <option value="2">Grade 2</option>
+            <option value="3">Grade 3</option>
+            <option value="4">Grade 4</option>
+            <option value="5">Grade 5</option>
+            <option value="6">Grade 6</option>
+            <option value="7">Grade 7</option>
         </select>
-        <input type="text" id="reg-subjects" placeholder="Subjects (e.g. Physics, Math)">
-        <button class="btn-pro" onclick="saveProfile()">Start Learning</button>
+        <input type="text" id="reg-subjects" placeholder="Subjects (e.g. Maths, Science)">
+        <button class="btn-pro" onclick="saveProfile()">Start Teaching</button>
     </div>
 </div>
 
 <nav class="sidebar">
-    <h2 style="color:var(--electric)">QE Academy</h2>
-    <div class="nav-item active" onclick="showPage('dash')"><i class="fas fa-th-large"></i> Dashboard</div>
-    <div class="nav-item" onclick="showPage('courses')"><i class="fas fa-book"></i> Practice Papers</div>
-    <div class="nav-item" onclick="showPage('events')"><i class="fas fa-calendar-star"></i> Events</div>
-    <div class="nav-item" onclick="showPage('leaderboard')"><i class="fas fa-trophy"></i> Leaderboard</div>
-    <div class="nav-item" onclick="showPage('about')"><i class="fas fa-info-circle"></i> About & Contact</div>
-    <div id="admin-btn" class="nav-item" style="display:none; color:var(--gold)" onclick="showPage('admin')"><i class="fas fa-user-shield"></i> Teacher Panel</div>
+    <div class="logo"><i class="fas fa-atom"></i> Quantum's Echo</div>
+    <div class="nav-item active" onclick="showPage('dash')"><i class="fas fa-home"></i> Dashboard</div>
+    <div class="nav-item" onclick="showPage('courses')"><i class="fas fa-book-open"></i> Practice Papers</div>
+    <div class="nav-item" onclick="showPage('events')"><i class="fas fa-bullhorn"></i> Events</div>
+    <div id="admin-btn" class="nav-item" style="display:none; color:var(--gold)" onclick="showPage('admin')">
+        <i class="fas fa-chalkboard-teacher"></i> Teacher Panel
+    </div>
+    <div class="nav-item" style="margin-top:auto" onclick="location.reload()"><i class="fas fa-sign-out-alt"></i> Logout</div>
 </nav>
 
 <main class="viewport">
+    
     <div id="dash" class="page active">
-        <h1>Welcome, <span id="display-name">Student</span></h1>
-        <div class="card" style="background: linear-gradient(90deg, #3b82f6, #60a5fa); color: white;">
-            <h3>Live Classroom</h3>
-            <p id="class-topic">No active class at the moment.</p>
-            <button id="join-btn" class="btn-pro" style="background:white; color:var(--electric); display:none;">Join Google Meet</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <h1 style="margin:0;">Hello, <span id="display-name" style="color:var(--electric)">Explorer</span>!</h1>
+            <div class="status-pill" style="background:#e2e8f0; color:#475569;">Grade <span id="display-grade-pill">--</span></div>
         </div>
-        <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div class="card"><h3>My School</h3><p id="display-school">--</p></div>
-            <div class="card"><h3>Grade</h3><p id="display-grade">--</p></div>
+
+        <div class="card live-banner">
+            <div>
+                <h2 style="margin:0;">Live Classroom</h2>
+                <p id="class-topic" style="margin:10px 0 0 0; opacity:0.9;">No active class scheduled.</p>
+            </div>
+            <button id="join-btn" class="btn-pro" style="background:white; color:var(--electric); width:auto; display:none; padding:10px 25px;">Join Now</button>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <div class="card">
+                <h4 style="margin:0; color:#64748b;">MY SCHOOL</h4>
+                <p id="display-school" style="font-size:20px; font-weight:700; margin:10px 0 0 0;">--</p>
+            </div>
+            <div class="card">
+                <h4 style="margin:0; color:#64748b;">MY SUBJECTS</h4>
+                <p id="display-subjects" style="font-size:20px; font-weight:700; margin:10px 0 0 0;">--</p>
+            </div>
         </div>
     </div>
 
     <div id="admin" class="page">
-        <h1>Teacher Dashboard</h1>
+        <h1>Teacher Panel</h1>
         <div class="card">
-            <h3>Broadcast Live Class</h3>
-            <input type="text" id="adm-topic" placeholder="Class Topic (e.g. Algebra Basics)">
-            <input type="text" id="adm-link" placeholder="GMeet Link">
-            <button class="btn-pro" onclick="broadcastClass()">Update for All Students</button>
+            <h3>Broadcast New Live Class</h3>
+            <p>Paste your Google Meet link and topic below.</p>
+            <input type="text" id="adm-topic" placeholder="Topic: e.g. Fractions & Decimals">
+            <input type="text" id="adm-link" placeholder="GMeet Link: https://meet.google.com/xxx-xxxx-xxx">
+            <button class="btn-pro" onclick="broadcastClass()">Launch Class for Students</button>
         </div>
     </div>
 
-    <div id="about" class="page">
-        <div class="card">
-            <h1>About Quantum's Echo</h1>
-            <p>Founded by Sanat, we aim to provide high-quality education tools.</p>
-            <hr>
-            <h3>Contact Me</h3>
-            <button class="btn-pro" onclick="window.location.href='mailto:tsanat669@gmail.com'">Send me an Email</button>
-        </div>
-    </div>
 </main>
 
 <script type="module">
@@ -110,19 +134,20 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    let currentUserEmail = "";
+    let userEmail = "";
 
     window.handleCredentialResponse = async (response) => {
         const payload = JSON.parse(atob(response.credential.split('.')[1]));
-        currentUserEmail = payload.email;
+        userEmail = payload.email;
+        document.getElementById('login-screen').style.display = 'none';
         
-        const userRef = doc(db, "students", currentUserEmail);
+        const userRef = doc(db, "students", userEmail);
         const userSnap = await getDoc(userRef);
 
         if (!userSnap.exists()) {
-            document.getElementById('onboarding-overlay').style.display = 'flex';
+            document.getElementById('onboarding-screen').style.display = 'flex';
         } else {
-            loadUserData(userSnap.data());
+            renderDashboard(userSnap.data());
         }
     };
 
@@ -131,49 +156,45 @@
             school: document.getElementById('reg-school').value,
             grade: document.getElementById('reg-grade').value,
             subjects: document.getElementById('reg-subjects').value,
-            email: currentUserEmail
+            email: userEmail
         };
-        await setDoc(doc(db, "students", currentUserEmail), data);
-        location.reload();
+        if(!data.school || !data.grade) return alert("Please fill in School and Grade!");
+        await setDoc(doc(db, "students", userEmail), data);
+        document.getElementById('onboarding-screen').style.display = 'none';
+        renderDashboard(data);
     };
 
-    function loadUserData(data) {
-        document.getElementById('display-name').innerText = currentUserEmail.split('@')[0];
+    function renderDashboard(data) {
+        document.getElementById('display-name').innerText = userEmail.split('@')[0];
         document.getElementById('display-school').innerText = data.school;
-        document.getElementById('display-grade').innerText = "Grade " + data.grade;
-        if(currentUserEmail === "tsanat669@gmail.com") document.getElementById('admin-btn').style.display = 'block';
+        document.getElementById('display-grade-pill').innerText = data.grade;
+        document.getElementById('display-subjects').innerText = data.subjects || "General";
+        if(userEmail === "tsanat669@gmail.com") document.getElementById('admin-btn').style.display = 'flex';
     }
 
     window.showPage = (id) => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        event.currentTarget.classList.add('active');
     };
 
     window.broadcastClass = async () => {
         const topic = document.getElementById('adm-topic').value;
         const link = document.getElementById('adm-link').value;
+        if(!topic || !link) return alert("Fill both fields!");
         await setDoc(doc(db, "settings", "classConfig"), { topic, link });
-        alert("Broadcasted!");
+        alert("Success! Your students can now see the link.");
     };
 
     onSnapshot(doc(db, "settings", "classConfig"), (doc) => {
         if(doc.exists()){
-            document.getElementById('class-topic').innerText = doc.data().topic;
+            document.getElementById('class-topic').innerText = "Upcoming: " + doc.data().topic;
             const btn = document.getElementById('join-btn');
             btn.style.display = 'block';
             btn.onclick = () => window.open(doc.data().link, '_blank');
         }
     });
-</script>
-
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true; s1.src='https://embed.tawk.to/65f8a29e1ec1082f05d978a2/default';
-s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
 </script>
 
 </body>
